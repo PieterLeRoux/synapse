@@ -1,0 +1,13 @@
+{
+  "functions": {
+    "api/auth.js": {
+      "runtime": "edge"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api/auth"
+    }
+  ]
+}

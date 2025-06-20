@@ -55,10 +55,30 @@ The project includes a GitHub Actions workflow (`.github/workflows/ci.yml`) that
 
 All jobs run in parallel for fast feedback and use Node.js 20 with npm caching for optimal performance.
 
+## 🔐 Deployment & Security
+
+### Vercel Deployment with Basic Auth
+
+The app includes HTTP Basic Authentication for production deployment on Vercel:
+
+**Setup:**
+1. Deploy to Vercel: `vercel --prod`
+2. Set environment variables in Vercel dashboard:
+   - `BASIC_AUTH_USER` - Username for access
+   - `BASIC_AUTH_PASS` - Password for access
+
+**How it works:**
+- `api/auth.js` - Vercel Edge Function middleware
+- `vercel.json` - Routes all requests through auth middleware
+- Users see browser login dialog before accessing the app
+- If env vars not set, authentication is disabled
+
 ## Project Structure
 
 ```
 synapse/
+├── api/              # Vercel Edge Functions
+│   └── auth.js       # Basic auth middleware
 ├── public/           # Static assets
 ├── src/
 │   ├── assets/       # Images, icons, etc.
@@ -70,6 +90,7 @@ synapse/
 │   ├── styles/       # Global styles and Tailwind config
 │   └── lib/          # Utilities and helpers
 ├── components.json   # ShadCN UI configuration
+├── vercel.json       # Vercel deployment config
 └── ...config files
 ```
 
