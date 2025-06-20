@@ -31,7 +31,7 @@ export function AppGuard({ children }: AppGuardProps) {
             </p>
           </div>
           <Button onClick={() => login()} size="lg" className="w-full">
-            Login with GitHub
+            Login
           </Button>
         </div>
       </div>

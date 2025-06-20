@@ -27,7 +27,7 @@ describe('useAuth', () => {
     expect(result.current).toHaveProperty('isLoading', false)
   })
 
-  it('calls loginWithRedirect with GitHub connection when login is called', () => {
+  it('calls loginWithRedirect when login is called', () => {
     const mockLogin = vi.fn()
     mockUseAuth0.mockReturnValue({
       isAuthenticated: false,
@@ -40,11 +40,7 @@ describe('useAuth', () => {
     const { result } = renderHook(() => useAuth())
     result.current.login()
 
-    expect(mockLogin).toHaveBeenCalledWith({
-      authorizationParams: {
-        connection: 'github',
-      },
-    })
+    expect(mockLogin).toHaveBeenCalledWith()
   })
 
   it('calls logout with returnTo parameter when logout is called', () => {

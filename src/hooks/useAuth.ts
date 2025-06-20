@@ -10,11 +10,7 @@ export function useAuth() {
   } = useAuth0()
 
   const login = () => {
-    loginWithRedirect({
-      authorizationParams: {
-        connection: 'github', // Use GitHub by default
-      },
-    })
+    loginWithRedirect()
   }
 
   const logout = () => {
