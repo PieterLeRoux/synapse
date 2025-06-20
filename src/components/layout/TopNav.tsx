@@ -49,9 +49,15 @@ export function TopNav() {
           ) : isAuthenticated && user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                <Button
+                  variant="ghost"
+                  className="relative h-8 w-8 rounded-full"
+                >
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={user.picture} alt={user.name || user.email} />
+                    <AvatarImage
+                      src={user.picture}
+                      alt={user.name || user.email}
+                    />
                     <AvatarFallback>
                       <User className="h-4 w-4" />
                     </AvatarFallback>

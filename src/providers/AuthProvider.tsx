@@ -10,7 +10,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID
 
   if (!domain || !clientId) {
-    console.error('Auth0 configuration missing. Please set VITE_AUTH0_DOMAIN and VITE_AUTH0_CLIENT_ID environment variables.')
+    console.error(
+      'Auth0 configuration missing. Please set VITE_AUTH0_DOMAIN and VITE_AUTH0_CLIENT_ID environment variables.'
+    )
     return <div>Auth configuration error</div>
   }
 
