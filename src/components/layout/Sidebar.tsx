@@ -13,6 +13,7 @@ import {
   ChevronLeft,
   ChevronRight,
   User,
+  Palette,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
@@ -22,6 +23,7 @@ import logoPng from '@/assets/logo.png'
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: Home },
+  { name: 'Canvas', href: '/canvas', icon: Palette },
   { name: 'Ontologies', href: '/ontologies', icon: Network },
   { name: 'Workflows', href: '/workflows', icon: Workflow },
   { name: 'Teams', href: '/teams', icon: Users },

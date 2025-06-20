@@ -55,30 +55,26 @@ The project includes a GitHub Actions workflow (`.github/workflows/ci.yml`) that
 
 All jobs run in parallel for fast feedback and use Node.js 20 with npm caching for optimal performance.
 
-## 🔐 Deployment & Security
+## 🚀 Deployment
 
-### Vercel Deployment with Basic Auth
+### Vercel Deployment
 
-The app includes HTTP Basic Authentication for production deployment on Vercel:
+Deploy to Vercel with a simple command:
 
-**Setup:**
-1. Deploy to Vercel: `vercel --prod`
-2. Set environment variables in Vercel dashboard:
-   - `BASIC_AUTH_USER` - Username for access
-   - `BASIC_AUTH_PASS` - Password for access
+```bash
+vercel --prod
+```
 
-**How it works:**
-- `api/index.js` - Vercel serverless function with Basic Auth
-- `vercel.json` - Routes all requests through auth function
-- Users see browser login dialog before accessing the app
-- If env vars not set, authentication is disabled
+**Password Protection:**
+For password protection, upgrade to Vercel Pro which includes native password protection:
+- Go to Project Settings → Deployment Protection
+- Enable password protection with a single click
+- Much simpler than custom middleware!
 
 ## Project Structure
 
 ```
 synapse/
-├── api/              # Vercel serverless functions
-│   └── index.js      # Basic auth + app serving
 ├── public/           # Static assets
 ├── src/
 │   ├── assets/       # Images, icons, etc.

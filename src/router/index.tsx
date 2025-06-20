@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { Shell } from '@/components/layout/Shell'
 import { Home } from '@/pages/Home'
+import { Canvas } from '@/pages/Canvas'
 import { Ontologies } from '@/pages/Ontologies'
 import { Workflows } from '@/pages/Workflows'
 import { Teams } from '@/pages/Teams'
@@ -24,6 +25,10 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <Home />,
+      },
+      {
+        path: 'canvas',
+        element: <Canvas />,
       },
       {
         path: 'ontologies',
