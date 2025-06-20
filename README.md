@@ -68,8 +68,8 @@ The app includes HTTP Basic Authentication for production deployment on Vercel:
    - `BASIC_AUTH_PASS` - Password for access
 
 **How it works:**
-- `middleware.ts` - Vercel Edge Middleware for authentication
-- `vercel.json` - Configures the middleware runtime
+- `api/index.js` - Vercel serverless function with Basic Auth
+- `vercel.json` - Routes all requests through auth function
 - Users see browser login dialog before accessing the app
 - If env vars not set, authentication is disabled
 
@@ -77,6 +77,8 @@ The app includes HTTP Basic Authentication for production deployment on Vercel:
 
 ```
 synapse/
+├── api/              # Vercel serverless functions
+│   └── index.js      # Basic auth + app serving
 ├── public/           # Static assets
 ├── src/
 │   ├── assets/       # Images, icons, etc.
@@ -88,7 +90,6 @@ synapse/
 │   ├── styles/       # Global styles and Tailwind config
 │   └── lib/          # Utilities and helpers
 ├── components.json   # ShadCN UI configuration
-├── middleware.ts     # Vercel Edge Middleware for auth
 ├── vercel.json       # Vercel deployment config
 └── ...config files
 ```
