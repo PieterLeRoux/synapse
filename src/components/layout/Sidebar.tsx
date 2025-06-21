@@ -13,17 +13,23 @@ import {
   ChevronLeft,
   ChevronRight,
   User,
-  Palette,
+  LogOut,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/hooks/useAuth'
 import logoPng from '@/assets/logo.png'
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: Home },
-  { name: 'Canvas', href: '/canvas', icon: Palette },
   { name: 'Ontologies', href: '/ontologies', icon: Network },
   { name: 'Workflows', href: '/workflows', icon: Workflow },
   { name: 'Teams', href: '/teams', icon: Users },
@@ -41,6 +47,7 @@ interface SidebarProps {
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false)
   const location = useLocation()
+  const { isAuthenticated, user, login, logout, isLoading } = useAuth()
 
   const NavItems = ({ showLabels = true }: { showLabels?: boolean }) => (
     <nav className="space-y-2">
@@ -103,26 +110,104 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     </Link>
   )
 
-  const UserSection = ({ showLabel = true }: { showLabel?: boolean }) => (
-    <div
-      className={cn(
-        'flex items-center gap-3 p-4 border-t',
-        !showLabel && 'justify-center'
-      )}
-    >
-      <Avatar className="h-8 w-8 rounded-lg" aria-label="Account profile">
-        <AvatarFallback className="rounded-lg bg-slate-200 text-slate-700">
-          <User className="h-4 w-4" />
-        </AvatarFallback>
-      </Avatar>
-      {showLabel && (
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium truncate">Agent Admin</p>
-          <p className="text-xs text-muted-foreground truncate">System User</p>
+  const UserSection = ({ showLabel = true }: { showLabel?: boolean }) => {
+    if (isLoading) {
+      return (
+        <div
+          className={cn(
+            'flex items-center gap-3 p-4 border-t',
+            !showLabel && 'justify-center'
+          )}
+        >
+          <div className="h-8 w-8 animate-pulse rounded-lg bg-muted" />
+          {showLabel && (
+            <div className="flex-1 min-w-0 space-y-1">
+              <div className="h-4 bg-muted rounded animate-pulse" />
+              <div className="h-3 bg-muted rounded animate-pulse w-3/4" />
+            </div>
+          )}
         </div>
-      )}
-    </div>
-  )
+      )
+    }
+
+    if (!isAuthenticated || !user) {
+      return (
+        <div
+          className={cn(
+            'flex items-center gap-3 p-4 border-t',
+            !showLabel && 'justify-center'
+          )}
+        >
+          <Button
+            onClick={() => login()}
+            size={showLabel ? 'sm' : 'icon'}
+            className="w-full"
+          >
+            {showLabel ? 'Login' : <User className="h-4 w-4" />}
+          </Button>
+        </div>
+      )
+    }
+
+    return (
+      <div className="p-4 border-t">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className={cn(
+                'w-full h-auto p-2 justify-start',
+                !showLabel && 'justify-center w-auto p-2'
+              )}
+            >
+              <div
+                className={cn(
+                  'flex items-center gap-3',
+                  !showLabel && 'justify-center'
+                )}
+              >
+                <Avatar className="h-8 w-8 rounded-lg">
+                  <AvatarImage
+                    src={user.picture}
+                    alt={user.name || user.email}
+                  />
+                  <AvatarFallback className="rounded-lg bg-slate-200 text-slate-700">
+                    <User className="h-4 w-4" />
+                  </AvatarFallback>
+                </Avatar>
+                {showLabel && (
+                  <div className="flex-1 min-w-0 text-left">
+                    <p className="text-sm font-medium truncate">
+                      {user.name || 'User'}
+                    </p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {user.email || 'No email'}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56" align="end" side="right">
+            <div className="flex items-center justify-start gap-2 p-2">
+              <div className="flex flex-col space-y-1 leading-none">
+                {user.name && <p className="font-medium">{user.name}</p>}
+                {user.email && (
+                  <p className="w-[200px] truncate text-sm text-muted-foreground">
+                    {user.email}
+                  </p>
+                )}
+              </div>
+            </div>
+            <DropdownMenuItem onClick={() => logout()}>
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Log out</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    )
+  }
 
   return (
     <>

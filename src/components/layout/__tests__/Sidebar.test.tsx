@@ -1,7 +1,13 @@
 import { render, screen } from '@testing-library/react'
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { BrowserRouter } from 'react-router-dom'
 import { Sidebar } from '../Sidebar'
+
+// Mock useAuth
+const mockUseAuth = vi.fn()
+vi.mock('@/hooks/useAuth', () => ({
+  useAuth: () => mockUseAuth(),
+}))
 
 const renderWithRouter = (component: React.ReactElement) => {
   return render(<BrowserRouter>{component}</BrowserRouter>)
@@ -9,6 +15,18 @@ const renderWithRouter = (component: React.ReactElement) => {
 
 describe('Sidebar', () => {
   const mockOnToggle = vi.fn()
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    // Default authenticated state for most tests
+    mockUseAuth.mockReturnValue({
+      isAuthenticated: true,
+      user: { name: 'Test User', email: 'test@example.com' },
+      login: vi.fn(),
+      logout: vi.fn(),
+      isLoading: false,
+    })
+  })
 
   it('renders the logo with black background section and is clickable', () => {
     renderWithRouter(<Sidebar collapsed={false} onToggle={mockOnToggle} />)
@@ -38,11 +56,22 @@ describe('Sidebar', () => {
     expect(screen.getByText('Teams')).toBeInTheDocument()
   })
 
-  it('renders user avatar in sidebar', () => {
+  it('renders user avatar when authenticated', () => {
     renderWithRouter(<Sidebar collapsed={false} onToggle={mockOnToggle} />)
-    const avatar = screen.getByLabelText('Account profile')
-    expect(avatar).toBeInTheDocument()
-    expect(avatar).toHaveClass('rounded-lg')
+    expect(screen.getByText('Test User')).toBeInTheDocument()
+    expect(screen.getByText('test@example.com')).toBeInTheDocument()
+  })
+
+  it('shows login button when not authenticated', () => {
+    mockUseAuth.mockReturnValue({
+      isAuthenticated: false,
+      user: null,
+      login: vi.fn(),
+      logout: vi.fn(),
+      isLoading: false,
+    })
+    renderWithRouter(<Sidebar collapsed={false} onToggle={mockOnToggle} />)
+    expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument()
   })
 
   it('shows collapse button with chevron left when expanded', () => {
@@ -51,15 +80,32 @@ describe('Sidebar', () => {
     expect(collapseButton).toBeInTheDocument()
   })
 
-  it('shows user label when expanded', () => {
+  it('shows user info when expanded and authenticated', () => {
     renderWithRouter(<Sidebar collapsed={false} onToggle={mockOnToggle} />)
-    expect(screen.getByText('Agent Admin')).toBeInTheDocument()
-    expect(screen.getByText('System User')).toBeInTheDocument()
+    expect(screen.getByText('Test User')).toBeInTheDocument()
+    expect(screen.getByText('test@example.com')).toBeInTheDocument()
   })
 
-  it('hides user label when collapsed', () => {
+  it('hides user info when collapsed', () => {
     renderWithRouter(<Sidebar collapsed={true} onToggle={mockOnToggle} />)
-    expect(screen.queryByText('Agent Admin')).not.toBeInTheDocument()
-    expect(screen.queryByText('System User')).not.toBeInTheDocument()
+    // User info should still be present but in a collapsed form (just avatar)
+    expect(screen.queryByText('Test User')).not.toBeInTheDocument()
+    expect(screen.queryByText('test@example.com')).not.toBeInTheDocument()
+  })
+
+  it('shows loading state', () => {
+    mockUseAuth.mockReturnValue({
+      isAuthenticated: false,
+      user: null,
+      login: vi.fn(),
+      logout: vi.fn(),
+      isLoading: true,
+    })
+    renderWithRouter(<Sidebar collapsed={false} onToggle={mockOnToggle} />)
+    // Should show loading skeleton
+    expect(screen.queryByText('Test User')).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: /login/i })
+    ).not.toBeInTheDocument()
   })
 })
